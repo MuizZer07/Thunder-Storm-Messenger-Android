@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "693144453564",
+    "firebase_url": "https://thunderstorm-messenger.firebaseio.com",
+    "project_id": "thunderstorm-messenger",
+    "storage_bucket": "thunderstorm-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693144453564:android:3473571668cecc98d02bb9",
+        "android_client_info": {
+          "package_name": "com.muizzer07.thunderstormmessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "693144453564-990lh6kmhrgqubfktsgtfk9hv4m634l9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCzVcMA8Jn28t7z_bAgXPZNQgKf-SbU5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "693144453564-990lh6kmhrgqubfktsgtfk9hv4m634l9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
