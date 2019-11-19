@@ -2,7 +2,6 @@ package com.muizzer07.thunderstormmessenger
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -28,7 +27,7 @@ class LoginActivity: AppCompatActivity(){
         }
 
         registerText.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
             finish()
         };
@@ -45,6 +44,10 @@ class LoginActivity: AppCompatActivity(){
 
                     Toast.makeText(this, "Successfully Signed In!", Toast.LENGTH_SHORT).show()
                     Log.d("LoginActivity", "Successfully Signed In!")
+
+                    val intent = Intent(this, LatestMessagesActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
