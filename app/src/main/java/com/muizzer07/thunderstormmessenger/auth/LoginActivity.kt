@@ -1,4 +1,4 @@
-package com.muizzer07.thunderstormmessenger
+package com.muizzer07.thunderstormmessenger.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity: AppCompatActivity(){

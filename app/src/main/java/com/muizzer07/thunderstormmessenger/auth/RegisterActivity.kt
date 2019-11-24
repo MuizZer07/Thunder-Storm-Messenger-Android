@@ -1,8 +1,7 @@
-package com.muizzer07.thunderstormmessenger
+package com.muizzer07.thunderstormmessenger.auth
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +11,9 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity
+import com.muizzer07.thunderstormmessenger.models.User
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
@@ -122,8 +124,4 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
     }
-}
-
-class  User(val uid: String, val username: String, val profileImageUrl:String){
-    constructor(): this("","","")
 }

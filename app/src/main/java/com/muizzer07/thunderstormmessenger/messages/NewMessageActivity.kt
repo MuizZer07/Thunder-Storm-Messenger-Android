@@ -1,21 +1,20 @@
-package com.muizzer07.thunderstormmessenger
+package com.muizzer07.thunderstormmessenger.messages
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.widget.LinearLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.models.User
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_new_message.*
-import kotlinx.android.synthetic.main.activity_register.view.*
 import kotlinx.android.synthetic.main.user_row_layout.view.*
 
 class NewMessageActivity : AppCompatActivity() {
@@ -26,6 +25,10 @@ class NewMessageActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Select User"
         fetchUsers()
+    }
+
+    companion object {
+        val USER_KEY = "USER_KEY"
     }
 
     private fun fetchUsers(){
@@ -43,6 +46,17 @@ class NewMessageActivity : AppCompatActivity() {
                     }
                 }
                 recycleview_new_message.adapter = adapter
+
+                adapter.setOnItemClickListener { item, view ->
+                    val userItem = item as UserItem
+
+                    val intent = Intent(view.context, ChatLogActivity::class.java)
+//                    intent.putExtra(USER_KEY, userItem.user.username)
+                    intent.putExtra(USER_KEY, userItem.user)
+                    startActivity(intent)
+
+                    finish()
+                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -52,7 +66,7 @@ class NewMessageActivity : AppCompatActivity() {
     }
 }
 
-class UserItem(val user:User): Item<ViewHolder>(){
+class UserItem(val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.usernameTextView.text = user.username
         Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.profile_dp)
