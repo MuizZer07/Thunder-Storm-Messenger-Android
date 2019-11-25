@@ -3,16 +3,22 @@ package com.muizzer07.thunderstormmessenger.messages
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.muizzer07.thunderstormmessenger.R
 import com.muizzer07.thunderstormmessenger.auth.LoginActivity
+import com.muizzer07.thunderstormmessenger.models.TextMessage
 import com.muizzer07.thunderstormmessenger.models.User
+import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.android.synthetic.main.chat_row_from.view.*
+import kotlinx.android.synthetic.main.new_message_row.view.*
 
 class LatestMessagesActivity : AppCompatActivity() {
 
@@ -20,11 +26,17 @@ class LatestMessagesActivity : AppCompatActivity() {
         var currentUser: User? = null
     }
 
+    val adapter = GroupAdapter<ViewHolder>()
+    val latestMessageMap = HashMap<String, TextMessage>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
         verifyUserIsLoggedIn()
         getCurrentUser()
+
+        latest_message_recyclerView.adapter = adapter
+        listenForLatestMessages()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -42,6 +54,42 @@ class LatestMessagesActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun refreshRecycleView(){
+        adapter.clear()
+        latestMessageMap.values.forEach{
+            adapter.add(LatestMessageRow(it))
+        }
+    }
+
+    private fun listenForLatestMessages(){
+        val fromuser_uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromuser_uid/")
+
+        ref.addChildEventListener(object: ChildEventListener{
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val textMessage = p0.getValue(TextMessage::class.java) ?: return
+                adapter.add(LatestMessageRow(textMessage))
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                val textMessage = p0.getValue(TextMessage::class.java) ?: return
+                adapter.add(LatestMessageRow(textMessage))
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
     }
 
     private fun getCurrentUser(){
@@ -78,5 +126,19 @@ class LatestMessagesActivity : AppCompatActivity() {
     private fun NewMessage(){
         val intent = Intent(this, NewMessageActivity::class.java)
         startActivity(intent)
+    }
+
+    class LatestMessageRow(val textMessage: TextMessage): Item<ViewHolder>(){
+        override fun bind(viewHolder: ViewHolder, position: Int) {
+            viewHolder.itemView.latest_message_textview.text = textMessage.text
+
+//            val uri = from_user.profileImageUrl
+//            val imageView = viewHolder.itemView.message_dp
+//            Picasso.get().load(uri).into(imageView)
+        }
+
+        override fun getLayout(): Int {
+            return R.layout.new_message_row
+        }
     }
 }
