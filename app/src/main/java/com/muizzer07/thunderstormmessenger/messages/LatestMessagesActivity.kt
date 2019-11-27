@@ -1,8 +1,10 @@
 package com.muizzer07.thunderstormmessenger.messages
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat.startActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,6 +19,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
 import kotlinx.android.synthetic.main.new_message_row.view.*
 
@@ -28,6 +31,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
     val latestMessageMap = HashMap<String, TextMessage>()
+    var toUsers = HashMap<String, User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +63,7 @@ class LatestMessagesActivity : AppCompatActivity() {
     private fun refreshRecycleView(){
         adapter.clear()
         latestMessageMap.values.forEach{
-            adapter.add(LatestMessageRow(it))
+            adapter.add(LatestMessageRow(it, toUsers))
         }
     }
 
@@ -70,12 +74,21 @@ class LatestMessagesActivity : AppCompatActivity() {
         ref.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val textMessage = p0.getValue(TextMessage::class.java) ?: return
-                adapter.add(LatestMessageRow(textMessage))
+                latestMessageMap.put(textMessage.toId, textMessage)
+                refreshRecycleView()
+
+                adapter.setOnItemClickListener { item, view ->
+                    val userItem = item as LatestMessageRow
+                    val intent = Intent(view.context, ChatLogActivity::class.java)
+                    intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.toId])
+                    startActivity(intent)
+                }
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
                 val textMessage = p0.getValue(TextMessage::class.java) ?: return
-                adapter.add(LatestMessageRow(textMessage))
+                latestMessageMap.put(textMessage.toId, textMessage)
+                refreshRecycleView()
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -128,13 +141,33 @@ class LatestMessagesActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    class LatestMessageRow(val textMessage: TextMessage): Item<ViewHolder>(){
+    class LatestMessageRow(val textMessage: TextMessage, var toUsers: HashMap<String, User>): Item<ViewHolder>(){
+
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.latest_message_textview.text = textMessage.text
 
-//            val uri = from_user.profileImageUrl
-//            val imageView = viewHolder.itemView.message_dp
-//            Picasso.get().load(uri).into(imageView)
+            val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.toId}/")
+
+            db.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(p0: DataSnapshot) {
+                    val user = p0.getValue(User::class.java)
+                    if(user != null){
+                        viewHolder.itemView.username_textView.text = user.username
+                        val uri = user.profileImageUrl
+                        val imageView = viewHolder.itemView.message_dp
+                        Picasso.get().load(uri).into(imageView)
+                        toUsers.put(user.uid, user)
+                    }
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
+
+
+
+
         }
 
         override fun getLayout(): Int {
