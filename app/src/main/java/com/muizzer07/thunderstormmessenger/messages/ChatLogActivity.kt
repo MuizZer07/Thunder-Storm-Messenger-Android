@@ -89,17 +89,18 @@ class ChatLogActivity : AppCompatActivity() {
 
         if(currentuser_uid == null) return
 
-        val textMessage = TextMessage(ref.key!!, newText, currentuser_uid, touser_uid, System.currentTimeMillis()/1000)
-        ref.setValue(textMessage)
+        val outGoingTextMessage = TextMessage(ref.key!!, newText, currentuser_uid, touser_uid, System.currentTimeMillis()/1000, "Outgoing")
+        ref.setValue(outGoingTextMessage)
                 .addOnSuccessListener {
                     messageText.text.clear()
                     texts_recycleView.scrollToPosition(adapter.itemCount - 1)
                 }
-        to_ref.setValue(textMessage)
+        val incomingTextMessage = TextMessage(ref.key!!, newText, currentuser_uid, touser_uid, System.currentTimeMillis()/1000, "Incoming")
+        to_ref.setValue(incomingTextMessage)
 
         // update latest messages node
-        FirebaseDatabase.getInstance().getReference("/latest-messages/$currentuser_uid/").child(touser_uid).setValue(textMessage)
-        FirebaseDatabase.getInstance().getReference("/latest-messages/$touser_uid/").child(currentuser_uid).setValue(textMessage)
+        FirebaseDatabase.getInstance().getReference("/latest-messages/$currentuser_uid/").child(touser_uid).setValue(outGoingTextMessage)
+        FirebaseDatabase.getInstance().getReference("/latest-messages/$touser_uid/").child(currentuser_uid).setValue(incomingTextMessage)
     }
 }
 

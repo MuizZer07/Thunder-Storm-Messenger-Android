@@ -80,7 +80,12 @@ class LatestMessagesActivity : AppCompatActivity() {
                 adapter.setOnItemClickListener { item, view ->
                     val userItem = item as LatestMessageRow
                     val intent = Intent(view.context, ChatLogActivity::class.java)
-                    intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.toId])
+                    if(userItem.textMessage.channel.equals("Outgoing")){
+                        intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.toId])
+                    }else if(userItem.textMessage.channel.equals("Incoming")){
+                        intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.fromId])
+                    }
+
                     startActivity(intent)
                 }
             }
@@ -146,24 +151,46 @@ class LatestMessagesActivity : AppCompatActivity() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.latest_message_textview.text = textMessage.text
 
-            val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.toId}/")
+            if(textMessage.channel.equals("Outgoing")){
+                val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.toId}/")
 
-            db.addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(p0: DataSnapshot) {
-                    val user = p0.getValue(User::class.java)
-                    if(user != null){
-                        viewHolder.itemView.username_textView.text = user.username
-                        val uri = user.profileImageUrl
-                        val imageView = viewHolder.itemView.message_dp
-                        Picasso.get().load(uri).into(imageView)
-                        toUsers.put(user.uid, user)
+                db.addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(p0: DataSnapshot) {
+                        val user = p0.getValue(User::class.java)
+                        if(user != null){
+                            viewHolder.itemView.username_textView.text = user.username
+                            val uri = user.profileImageUrl
+                            val imageView = viewHolder.itemView.message_dp
+                            Picasso.get().load(uri).into(imageView)
+                            toUsers.put(user.uid, user)
+                        }
                     }
-                }
 
-                override fun onCancelled(p0: DatabaseError) {
+                    override fun onCancelled(p0: DatabaseError) {
 
-                }
-            })
+                    }
+                })
+            }else if(textMessage.channel.equals("Incoming")){
+                val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.fromId}/")
+
+                db.addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(p0: DataSnapshot) {
+                        val user = p0.getValue(User::class.java)
+                        if(user != null){
+                            viewHolder.itemView.username_textView.text = user.username
+                            val uri = user.profileImageUrl
+                            val imageView = viewHolder.itemView.message_dp
+                            Picasso.get().load(uri).into(imageView)
+                            toUsers.put(user.uid, user)
+                        }
+                    }
+
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+                })
+            }
+
 
 
 
