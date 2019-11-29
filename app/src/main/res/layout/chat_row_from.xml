@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
     tools:layout_editor_absoluteY="25dp">
 
     <TextView
@@ -18,22 +19,35 @@
         android:text="Hey!! Glad to hear that! I was thinking the same. I'm fine. What about you?"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toStartOf="@+id/dp_from"
-        app:layout_constraintTop_toTopOf="@+id/dp_from" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/dp_from"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        app:civ_border_width="2dp"
-        app:civ_border_color="@android:color/black"
         android:background="@drawable/rounded_button_image"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:civ_border_color="@android:color/black"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/text_from"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/mesage_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/custom_message_details"
+        android:padding="3dp"
+        android:text="sent: a minute ago"
+        android:textColor="@android:color/background_light"
+        android:textSize="8sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/text_from"
+        app:layout_constraintTop_toBottomOf="@+id/text_from" />
 
 </android.support.constraint.ConstraintLayout>

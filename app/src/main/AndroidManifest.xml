@@ -11,29 +11,24 @@
         android:roundIcon="@mipmap/ic_thunderstorm_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity
-            android:name=".messages.LatestMessagesActivity">
+        <activity android:name=".messages.LatestMessagesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".auth.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".auth.RegisterActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".messages.NewMessageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".messages.LatestMessagesActivity" />
         </activity>
-
         <activity android:name=".messages.ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -43,6 +38,12 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <activity android:name=".auth.ProfileActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".messages.LatestMessagesActivity" />
+        </activity>
     </application>
 
 </manifest>

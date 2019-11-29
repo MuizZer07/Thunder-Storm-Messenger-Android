@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat.startActivity
+import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.muizzer07.thunderstormmessenger.R
 import com.muizzer07.thunderstormmessenger.auth.LoginActivity
+import com.muizzer07.thunderstormmessenger.auth.ProfileActivity
+import com.muizzer07.thunderstormmessenger.helpers.TimeStampManagement
 import com.muizzer07.thunderstormmessenger.models.TextMessage
 import com.muizzer07.thunderstormmessenger.models.User
 import com.squareup.picasso.Picasso
@@ -22,6 +25,10 @@ import kotlinx.android.synthetic.main.activity_latest_messages.*
 import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
 import kotlinx.android.synthetic.main.new_message_row.view.*
+import java.sql.Time
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class LatestMessagesActivity : AppCompatActivity() {
 
@@ -36,6 +43,7 @@ class LatestMessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
+
         verifyUserIsLoggedIn()
         getCurrentUser()
 
@@ -50,6 +58,9 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
+            R.id.menu_dp -> {
+                ProfilePage()
+            }
             R.id.menu_new_message -> {
                 NewMessage()
             }
@@ -62,7 +73,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     private fun refreshRecycleView(){
         adapter.clear()
-        latestMessageMap.values.forEach{
+        latestMessageMap.values.sortedByDescending { it.timeStamp }.forEach{
             adapter.add(LatestMessageRow(it, toUsers))
         }
     }
@@ -92,7 +103,12 @@ class LatestMessagesActivity : AppCompatActivity() {
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
                 val textMessage = p0.getValue(TextMessage::class.java) ?: return
-                latestMessageMap.put(textMessage.toId, textMessage)
+                if(textMessage.channel.equals("Outgoing")){
+                    latestMessageMap.put(textMessage.toId, textMessage)
+                }else{
+                    latestMessageMap.put(textMessage.fromId, textMessage)
+                }
+
                 refreshRecycleView()
             }
 
@@ -146,10 +162,16 @@ class LatestMessagesActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun ProfilePage(){
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
+    }
+
     class LatestMessageRow(val textMessage: TextMessage, var toUsers: HashMap<String, User>): Item<ViewHolder>(){
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.latest_message_textview.text = textMessage.text
+            viewHolder.itemView.time_stamp.text = TimeStampManagement().processTimeStamp(textMessage.timeStamp)
 
             if(textMessage.channel.equals("Outgoing")){
                 val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.toId}/")
