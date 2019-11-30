@@ -159,11 +159,13 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     private fun NewMessage(){
         val intent = Intent(this, NewMessageActivity::class.java)
+        intent.putExtra(NewMessageActivity.USER_KEY, currentUser)
         startActivity(intent)
     }
 
     private fun ProfilePage(){
         val intent = Intent(this, ProfileActivity::class.java)
+
         startActivity(intent)
     }
 
