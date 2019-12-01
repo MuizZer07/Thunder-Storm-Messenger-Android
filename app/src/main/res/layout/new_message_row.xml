@@ -20,8 +20,7 @@
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/username_textView"
@@ -29,7 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:text="username"
         android:textColor="@android:color/holo_blue_bright"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -74,16 +72,22 @@
 
     <TextView
         android:id="@+id/time_stamp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="15dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="- 1 minute ago"
         android:textColor="@android:color/darker_gray"
         android:textSize="10sp"
         android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxEms="30"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/username_textView"
+        app:layout_constraintEnd_toEndOf="@+id/seperator"
         app:layout_constraintStart_toEndOf="@+id/username_textView"
         app:layout_constraintTop_toTopOf="@+id/username_textView" />
 

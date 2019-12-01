@@ -48,6 +48,7 @@ class NewMessageActivity : AppCompatActivity() {
                 recycleview_new_message.adapter = adapter
 
                 adapter.setOnItemClickListener { item, view ->
+                    view.isEnabled = false
                     val userItem = item as UserItem
 
                     val intent = Intent(view.context, ChatLogActivity::class.java)

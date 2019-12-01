@@ -75,7 +75,7 @@
         app:layout_constraintStart_toStartOf="@+id/loginBtn" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/logo"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -84,14 +84,14 @@
         android:layout_marginRight="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_storm" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -109,5 +109,18 @@
         app:layout_constraintBottom_toTopOf="@+id/emailText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/login_progressLoader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="75dp"
+        android:layout_marginTop="8dp"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:indeterminateTint="@android:color/holo_blue_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordText" />
+
 
 </android.support.constraint.ConstraintLayout>

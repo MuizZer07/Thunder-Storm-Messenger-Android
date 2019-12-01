@@ -38,6 +38,8 @@ class ChatLogActivity : AppCompatActivity() {
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         supportActionBar?.title = toUser!!.username
 
+
+
         listenForMessages()
 
         sendBtn.setOnClickListener {
@@ -48,14 +50,14 @@ class ChatLogActivity : AppCompatActivity() {
             if(item.getItem(0).javaClass == ChatFromItem::class.java){
                 val visible = view.mesage_info_text.visibility
                 if(visible == View.VISIBLE){
-                    view.mesage_info_text.visibility = View.INVISIBLE
+                    view.mesage_info_text.visibility = View.GONE
                 }else{
                     view.mesage_info_text.visibility = View.VISIBLE
                 }
             }else{
                 val visible = view.mesage_info_text_to.visibility
                 if(visible == View.VISIBLE){
-                    view.mesage_info_text_to.visibility = View.INVISIBLE
+                    view.mesage_info_text_to.visibility = View.GONE
                 }else{
                     view.mesage_info_text_to.visibility = View.VISIBLE
                 }
@@ -137,7 +139,7 @@ class ChatFromItem(val textMessage: TextMessage, val user: User): Item<ViewHolde
 
         val time_stamp = "- sent " + TimeStampManagement().processTimeStamp(textMessage.timeStamp) + "\n- haven't seen yet"
         viewHolder.itemView.mesage_info_text.text = time_stamp
-        viewHolder.itemView.mesage_info_text.visibility = View.INVISIBLE
+        viewHolder.itemView.mesage_info_text.visibility = View.GONE
     }
 
     override fun getLayout(): Int {
@@ -155,7 +157,7 @@ class ChatToItem(val textMessage: TextMessage, val user: User): Item<ViewHolder>
 
         val time_stamp = "- sent " + TimeStampManagement().processTimeStamp(textMessage.timeStamp) + "\n- haven't seen yet"
         viewHolder.itemView.mesage_info_text_to.text = time_stamp
-        viewHolder.itemView.mesage_info_text_to.visibility = View.INVISIBLE
+        viewHolder.itemView.mesage_info_text_to.visibility = View.GONE
     }
 
     override fun getLayout(): Int {

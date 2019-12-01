@@ -7,13 +7,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import android.widget.ViewAnimator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.muizzer07.thunderstormmessenger.R
 import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity
 import com.muizzer07.thunderstormmessenger.models.User
+import kotlinx.android.synthetic.main.activity_latest_messages.*
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
@@ -32,6 +35,8 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            registerBtn.visibility = View.INVISIBLE
+            already_have_an_account_text.visibility = View.INVISIBLE
             perform_registration(email, password)
         }
 
@@ -57,8 +62,6 @@ class RegisterActivity : AppCompatActivity() {
         if(requestCode == 0 && resultCode == Activity.RESULT_OK && data != null){
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
-//            val bitmapDrawable = BitmapDrawable(bitmap)
-//            profilePic.setBackgroundDrawable(bitmapDrawable)
 
             profile_image.setImageBitmap(bitmap)
             profilePic.alpha = 0f
@@ -66,12 +69,39 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun startProgressLoader(){
+        Thread(Runnable {
+            this@RegisterActivity.runOnUiThread(java.lang.Runnable {
+                register_progressLoader.visibility = View.VISIBLE
+            })
+
+            try {
+                var i=0;
+                while(i<Int.MAX_VALUE){
+                    i++
+                }
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        }).start()
+    }
+
+    private fun stopProgressLoader(){
+        this@RegisterActivity.runOnUiThread(java.lang.Runnable {
+            register_progressLoader.visibility = View.GONE
+        })
+    }
+
     private fun perform_registration(email: String, password:String){
+        startProgressLoader()
         val auth =  FirebaseAuth.getInstance()
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if(!it.isSuccessful){
                         Log.d("RegisterActivity", "Registration Failed!")
+                        registerBtn.visibility = View.VISIBLE
+                        already_have_an_account_text.visibility = View.VISIBLE
                         return@addOnCompleteListener
                     }
 
@@ -82,6 +112,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener{
                     Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
+                    stopProgressLoader()
                 }
     }
 
@@ -103,6 +134,10 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    registerBtn.visibility = View.VISIBLE
+                    already_have_an_account_text.visibility = View.VISIBLE
+
+                    stopProgressLoader()
                 }
     }
 
@@ -122,6 +157,11 @@ class RegisterActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Log.d("RegisterActivity", it.message);
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+
+                    registerBtn.visibility = View.VISIBLE
+                    already_have_an_account_text.visibility = View.VISIBLE
+
+                    stopProgressLoader()
                 }
     }
 }

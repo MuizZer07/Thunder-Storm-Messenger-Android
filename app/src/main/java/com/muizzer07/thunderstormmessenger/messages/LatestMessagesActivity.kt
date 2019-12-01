@@ -9,9 +9,12 @@ import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.R.id.latest_message_recyclerView
+import com.muizzer07.thunderstormmessenger.R.id.menu_sign_out
 import com.muizzer07.thunderstormmessenger.auth.LoginActivity
 import com.muizzer07.thunderstormmessenger.auth.ProfileActivity
 import com.muizzer07.thunderstormmessenger.helpers.TimeStampManagement
@@ -59,13 +62,13 @@ class LatestMessagesActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.menu_dp -> {
-                ProfilePage()
+                ProfilePage(item)
             }
             R.id.menu_new_message -> {
-                NewMessage()
+                NewMessage(item)
             }
             R.id.menu_sign_out -> {
-                logoutUser()
+                logoutUser(item)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -89,15 +92,24 @@ class LatestMessagesActivity : AppCompatActivity() {
                 refreshRecycleView()
 
                 adapter.setOnItemClickListener { item, view ->
+                    view.isEnabled = false
                     val userItem = item as LatestMessageRow
                     val intent = Intent(view.context, ChatLogActivity::class.java)
                     if(userItem.textMessage.channel.equals("Outgoing")){
-                        intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.toId])
+                        if(toUsers.containsKey(userItem.textMessage.toId)){
+                            intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.toId])
+                            startActivity(intent)
+                        }else{
+                            view.isEnabled = true
+                        }
                     }else if(userItem.textMessage.channel.equals("Incoming")){
-                        intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.fromId])
+                        if(toUsers.containsKey(userItem.textMessage.fromId)){
+                            intent.putExtra(NewMessageActivity.USER_KEY, toUsers[userItem.textMessage.fromId])
+                            startActivity(intent)
+                        }else{
+                            view.isEnabled = true
+                        }
                     }
-
-                    startActivity(intent)
                 }
             }
 
@@ -150,30 +162,30 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
     }
 
-    private fun logoutUser(){
+    private fun logoutUser(menuItem: MenuItem){
+        menuItem.setEnabled(false)
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 
-    private fun NewMessage(){
+    private fun NewMessage(menuItem: MenuItem){
+        menuItem.setEnabled(false)
         val intent = Intent(this, NewMessageActivity::class.java)
         intent.putExtra(NewMessageActivity.USER_KEY, currentUser)
         startActivity(intent)
     }
 
-    private fun ProfilePage(){
+    private fun ProfilePage(menuItem: MenuItem){
+        menuItem.setEnabled(false)
         val intent = Intent(this, ProfileActivity::class.java)
-
         startActivity(intent)
     }
 
     class LatestMessageRow(val textMessage: TextMessage, var toUsers: HashMap<String, User>): Item<ViewHolder>(){
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
-            viewHolder.itemView.latest_message_textview.text = textMessage.text
-            viewHolder.itemView.time_stamp.text = TimeStampManagement().processTimeStamp(textMessage.timeStamp)
 
             if(textMessage.channel.equals("Outgoing")){
                 val db = FirebaseDatabase.getInstance().getReference("/users/${textMessage.toId}/")
@@ -215,10 +227,8 @@ class LatestMessagesActivity : AppCompatActivity() {
                 })
             }
 
-
-
-
-
+            viewHolder.itemView.latest_message_textview.text = textMessage.text
+            viewHolder.itemView.time_stamp.text = TimeStampManagement().processTimeStamp(textMessage.timeStamp)
         }
 
         override fun getLayout(): Int {
