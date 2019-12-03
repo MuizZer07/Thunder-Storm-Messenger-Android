@@ -22,9 +22,18 @@ class NewMessageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
+        Log.d("NewMessageActivity", "NewMessageActivity started")
 
         supportActionBar?.title = "New Message"
         fetchUsers()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d("NewMessageActivity", "Back Button Pressed")
+        val intent = Intent(this, LatestMessagesActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     companion object {
@@ -32,17 +41,19 @@ class NewMessageActivity : AppCompatActivity() {
     }
 
     private fun fetchUsers(){
+        Log.d("NewMessageActivity", "Fetching users from firebase")
         val db =FirebaseDatabase.getInstance().getReference("/users")
         db.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 val adapter = GroupAdapter<ViewHolder>()
 
                 p0.children.forEach{
-                    Log.d("NewMessageActivity", it.toString())
+                    Log.d("NewMessageActivity", "User: " + it.toString())
 
                     val user = it.getValue(User::class.java)
                     if(user != null){
                         adapter.add(UserItem(user))
+                        Log.d("NewMessageActivity", "User added to adapter: " + user.username)
                     }
                 }
                 recycleview_new_message.adapter = adapter
@@ -50,11 +61,13 @@ class NewMessageActivity : AppCompatActivity() {
                 adapter.setOnItemClickListener { item, view ->
                     view.isEnabled = false
                     val userItem = item as UserItem
+                    Log.d("NewMessageActivity", "User clicked: " + userItem.toString())
 
                     val intent = Intent(view.context, ChatLogActivity::class.java)
                     intent.putExtra(USER_KEY, userItem.user)
                     startActivity(intent)
 
+                    Log.d("NewMessageActivity", "NewMessageActivity finished")
                     finish()
                 }
             }
@@ -70,6 +83,8 @@ class UserItem(val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.usernameTextView.text = user.username
         Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.profile_dp)
+
+        Log.d("NewMessageActivity", "Username and profile picture loaded")
     }
 
     override fun getLayout(): Int {

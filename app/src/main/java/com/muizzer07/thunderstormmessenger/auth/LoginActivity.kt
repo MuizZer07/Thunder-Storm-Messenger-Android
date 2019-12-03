@@ -64,6 +64,7 @@ class LoginActivity: AppCompatActivity(){
     }
 
     private fun registerPage(){
+        registerText.isEnabled = false
         val intent = Intent(this, RegisterActivity::class.java)
         startActivity(intent)
         finish()

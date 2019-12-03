@@ -41,7 +41,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         already_have_an_account_text.setOnClickListener {
-
+            already_have_an_account_text.isEnabled = false
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()

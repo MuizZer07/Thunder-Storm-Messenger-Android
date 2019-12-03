@@ -1,8 +1,10 @@
 package com.muizzer07.thunderstormmessenger.auth
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity
 import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity.Companion.currentUser
 import com.muizzer07.thunderstormmessenger.messages.NewMessageActivity
 import com.muizzer07.thunderstormmessenger.models.User
@@ -22,5 +24,12 @@ class ProfileActivity : AppCompatActivity() {
         val uri = currentUser!!.profileImageUrl
         Picasso.get().load(uri).into(profileimageView)
         profilenameText.text = currentUser!!.username
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, LatestMessagesActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

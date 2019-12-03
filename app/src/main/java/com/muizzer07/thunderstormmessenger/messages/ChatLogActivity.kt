@@ -33,40 +33,63 @@ class ChatLogActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
 
+        Log.d("ChatlogActivity", "ChatlogActivity finished")
+
         texts_recycleView.adapter = adapter
 
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+        Log.d("ChatlogActivity", "To User: " + toUser!!.username)
+
         supportActionBar?.title = toUser!!.username
-
-
 
         listenForMessages()
 
         sendBtn.setOnClickListener {
-            performSendMessage()
+            Log.d("ChatlogActivity", "Send Button clicked: " + messageText.text)
+            if(!messageText.text.toString().equals("")){
+                performSendMessage()
+            }
         }
 
         adapter.setOnItemClickListener { item, view ->
             if(item.getItem(0).javaClass == ChatFromItem::class.java){
                 val visible = view.mesage_info_text.visibility
+
+                Log.d("ChatlogActivity", "From Message Info: " + visible)
                 if(visible == View.VISIBLE){
                     view.mesage_info_text.visibility = View.GONE
                 }else{
                     view.mesage_info_text.visibility = View.VISIBLE
                 }
-            }else{
+                Log.d("ChatlogActivity", "Message clicked; info visible:" + view.mesage_info_text.visibility)
+            }else if((item.getItem(0).javaClass == ChatToItem::class.java)){
                 val visible = view.mesage_info_text_to.visibility
+
+                Log.d("ChatlogActivity", "To Message Info: " + visible)
                 if(visible == View.VISIBLE){
                     view.mesage_info_text_to.visibility = View.GONE
                 }else{
+                    Log.d("ChatlogActivity", "VISIBLE: " + view.mesage_info_text_to.text)
                     view.mesage_info_text_to.visibility = View.VISIBLE
                 }
+                Log.d("ChatlogActivity", "Message clicked; info visible:" + view.mesage_info_text_to.visibility)
             }
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d("ChatlogActivity", "Back button clicked")
+        val intent = Intent(this, LatestMessagesActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     private fun listenForMessages(){
+        Log.d("ChatlogActivity", "Listening for new messages")
         val currentuser_uid = LatestMessagesActivity.currentUser!!.uid
+
+        Log.d("ChatlogActivity", "Current user uid: " + currentuser_uid)
         val touser_uid = toUser!!.uid
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$currentuser_uid/$touser_uid")
 
@@ -75,11 +98,14 @@ class ChatLogActivity : AppCompatActivity() {
                 val textMessage = p0.getValue(TextMessage::class.java)
 
                 if(textMessage != null){
+                    Log.d("ChatlogActivity", "Text Message: " + textMessage.text)
                     if(textMessage.fromId == FirebaseAuth.getInstance().uid){
                         adapter.add(ChatFromItem(textMessage, LatestMessagesActivity.currentUser!!))
                     }else{
                         adapter.add(ChatToItem(textMessage, toUser!!))
                     }
+                    Log.d("ChatlogActivity", "Text Message From ID: " + textMessage.fromId)
+                    Log.d("ChatlogActivity", "Text Message To ID: " + textMessage.toId)
                     texts_recycleView.scrollToPosition(adapter.itemCount - 1)
                 }
             }
@@ -107,6 +133,8 @@ class ChatLogActivity : AppCompatActivity() {
         val currentuser_uid = LatestMessagesActivity.currentUser!!.uid
         val touser_uid = toUser!!.uid
 
+        Log.d("ChatlogActivity", "Send Message to " + toUser!!.username)
+
         // all messages node
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$currentuser_uid/$touser_uid").push()
         val to_ref = FirebaseDatabase.getInstance().getReference("/user-messages/$touser_uid/$currentuser_uid").push()
@@ -120,7 +148,8 @@ class ChatLogActivity : AppCompatActivity() {
                     texts_recycleView.scrollToPosition(adapter.itemCount - 1)
                 }
 
-        val incomingTextMessage = TextMessage(ref.key!!, newText, currentuser_uid, touser_uid, System.currentTimeMillis()/1000, "Incoming")
+        Log.d("ChatlogActivity", "Sent Text Message: " + messageText.text)
+        val incomingTextMessage = TextMessage(ref.key!!, newText, currentuser_uid, touser_uid, System.currentTimeMillis(), "Incoming")
         to_ref.setValue(incomingTextMessage)
 
         // update latest messages node
@@ -140,6 +169,7 @@ class ChatFromItem(val textMessage: TextMessage, val user: User): Item<ViewHolde
         val time_stamp = "- sent " + TimeStampManagement().processTimeStamp(textMessage.timeStamp) + "\n- haven't seen yet"
         viewHolder.itemView.mesage_info_text.text = time_stamp
         viewHolder.itemView.mesage_info_text.visibility = View.GONE
+        Log.d("ChatlogActivity", "From Message Timestamp: " + time_stamp)
     }
 
     override fun getLayout(): Int {
@@ -158,6 +188,7 @@ class ChatToItem(val textMessage: TextMessage, val user: User): Item<ViewHolder>
         val time_stamp = "- sent " + TimeStampManagement().processTimeStamp(textMessage.timeStamp) + "\n- haven't seen yet"
         viewHolder.itemView.mesage_info_text_to.text = time_stamp
         viewHolder.itemView.mesage_info_text_to.visibility = View.GONE
+        Log.d("ChatlogActivity", "To Message Timestamp: " + time_stamp)
     }
 
     override fun getLayout(): Int {
