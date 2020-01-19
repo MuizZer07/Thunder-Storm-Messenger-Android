@@ -11,6 +11,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.RestAPI.API
+import com.muizzer07.thunderstormmessenger.RestAPI.RetrofitClient
+import com.muizzer07.thunderstormmessenger.helpers.Constants
 import com.muizzer07.thunderstormmessenger.helpers.TimeStampManagement
 import com.muizzer07.thunderstormmessenger.models.TextMessage
 import com.muizzer07.thunderstormmessenger.models.User
@@ -23,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_row_from.*
 import kotlinx.android.synthetic.main.chat_row_to.view.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
+import retrofit2.create
 
 class ChatLogActivity : AppCompatActivity() {
 
@@ -155,6 +159,10 @@ class ChatLogActivity : AppCompatActivity() {
         // update latest messages node
         FirebaseDatabase.getInstance().getReference("/latest-messages/$currentuser_uid/").child(touser_uid).setValue(outGoingTextMessage)
         FirebaseDatabase.getInstance().getReference("/latest-messages/$touser_uid/").child(currentuser_uid).setValue(incomingTextMessage)
+
+        // send push notification to the reciever
+        val api = RetrofitClient.getClient(Constants.BASE_URL).create<API>()
+        api.sendNotification("/topics/chat", toUser!!.Token, LatestMessagesActivity.currentUser!!.username, newText)
     }
 }
 

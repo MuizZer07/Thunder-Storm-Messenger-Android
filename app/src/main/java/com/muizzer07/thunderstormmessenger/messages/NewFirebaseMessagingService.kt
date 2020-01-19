@@ -9,9 +9,15 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.muizzer07.thunderstormmessenger.R
+import com.muizzer07.thunderstormmessenger.models.User
+import kotlinx.android.synthetic.main.activity_register.*
 
 class NewFirebaseMessagingService: FirebaseMessagingService(){
 
@@ -103,6 +109,8 @@ class NewFirebaseMessagingService: FirebaseMessagingService(){
      */
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
+        val uid = FirebaseAuth.getInstance().uid
+        FirebaseDatabase.getInstance().getReference("/users/$uid/").child("Token").setValue(token)
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 
@@ -126,6 +134,7 @@ class NewFirebaseMessagingService: FirebaseMessagingService(){
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

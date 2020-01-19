@@ -1,5 +1,6 @@
 package com.muizzer07.thunderstormmessenger.messages
 
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -24,6 +25,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.muizzer07.thunderstormmessenger.R
 import com.muizzer07.thunderstormmessenger.R.id.latest_message_recyclerView
 import com.muizzer07.thunderstormmessenger.R.id.menu_sign_out
+import com.muizzer07.thunderstormmessenger.RestAPI.RetrofitClient
 import com.muizzer07.thunderstormmessenger.auth.LoginActivity
 import com.muizzer07.thunderstormmessenger.auth.ProfileActivity
 import com.muizzer07.thunderstormmessenger.helpers.TimeStampManagement
@@ -59,24 +61,10 @@ class LatestMessagesActivity : AppCompatActivity() {
         verifyUserIsLoggedIn()
         getCurrentUser()
 
+        FirebaseMessaging.getInstance().subscribeToTopic("chat")
+
         latest_message_recyclerView.adapter = adapter
         listenForLatestMessages()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create channel to show notifications.
-            val channelId = getString(R.string.default_notification_channel_id)
-            val channelName = getString(R.string.default_notification_channel_name)
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(NotificationChannel(channelId,
-                    channelName, NotificationManager.IMPORTANCE_LOW))
-        }
-
-        val fm = FirebaseMessaging.getInstance()
-        fm.send(RemoteMessage.Builder("${R.string.sender_id}@fcm.googleapis.com")
-                .setMessageId(Integer.toString(1))
-                .addData("my_message", "Hello World")
-                .addData("my_action", "SAY_HELLO")
-                .build())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
