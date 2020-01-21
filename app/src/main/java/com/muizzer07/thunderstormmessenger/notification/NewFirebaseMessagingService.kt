@@ -1,4 +1,4 @@
-package com.muizzer07.thunderstormmessenger.messages
+package com.muizzer07.thunderstormmessenger.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,15 +9,12 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.muizzer07.thunderstormmessenger.R
-import com.muizzer07.thunderstormmessenger.models.User
-import kotlinx.android.synthetic.main.activity_register.*
+import com.muizzer07.thunderstormmessenger.messages.LatestMessagesActivity
 
 class NewFirebaseMessagingService: FirebaseMessagingService(){
 
@@ -74,11 +71,10 @@ class NewFirebaseMessagingService: FirebaseMessagingService(){
      */
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        sendRegistrationToServer(token)
+//        sendRegistrationToServer(token)
     }
     // [END on_new_token]
 
@@ -107,10 +103,10 @@ class NewFirebaseMessagingService: FirebaseMessagingService(){
      *
      * @param token The new token.
      */
-    private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
+    fun sendRegistrationToServer(token: String?) {
         val uid = FirebaseAuth.getInstance().uid
-        FirebaseDatabase.getInstance().getReference("/users/$uid/").child("Token").setValue(token)
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/").child("Token").setValue(token)
+
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 

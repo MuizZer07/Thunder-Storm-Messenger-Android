@@ -1,10 +1,12 @@
 package com.muizzer07.thunderstormmessenger.messages
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -27,6 +29,16 @@ import kotlinx.android.synthetic.main.chat_row_from.*
 import kotlinx.android.synthetic.main.chat_row_to.view.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
 import retrofit2.create
+import android.os.AsyncTask.execute
+import java.io.IOException
+import android.os.StrictMode
+import com.muizzer07.thunderstormmessenger.notification.NotificationRequest
+import com.muizzer07.thunderstormmessenger.notification.SendNotificationModel
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 class ChatLogActivity : AppCompatActivity() {
 
@@ -160,9 +172,27 @@ class ChatLogActivity : AppCompatActivity() {
         FirebaseDatabase.getInstance().getReference("/latest-messages/$currentuser_uid/").child(touser_uid).setValue(outGoingTextMessage)
         FirebaseDatabase.getInstance().getReference("/latest-messages/$touser_uid/").child(currentuser_uid).setValue(incomingTextMessage)
 
-        // send push notification to the reciever
+        // send push notification to the receiver
+        val sendnotificationmodel = SendNotificationModel(newText, LatestMessagesActivity.currentUser!!.username)
+        Log.i("Current User:: ", LatestMessagesActivity.currentUser!!.username)
+
+        val notificationRequest = NotificationRequest()
+        notificationRequest.token = toUser!!.Token
+        notificationRequest.sendNotificationModel = sendnotificationmodel
+
         val api = RetrofitClient.getClient(Constants.BASE_URL).create<API>()
-        api.sendNotification("/topics/chat", toUser!!.Token, LatestMessagesActivity.currentUser!!.username, newText)
+        val call = api.sendNotification(notificationRequest)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val myItem = response.body()
+                Log.i("Notification Request", "" + response + response.message())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //Handle failure
+            }
+        })
     }
 }
 

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -31,6 +32,7 @@ import com.muizzer07.thunderstormmessenger.auth.ProfileActivity
 import com.muizzer07.thunderstormmessenger.helpers.TimeStampManagement
 import com.muizzer07.thunderstormmessenger.models.TextMessage
 import com.muizzer07.thunderstormmessenger.models.User
+import com.muizzer07.thunderstormmessenger.notification.NewFirebaseMessagingService
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -59,9 +61,9 @@ class LatestMessagesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_latest_messages)
 
         verifyUserIsLoggedIn()
-        getCurrentUser()
 
-        FirebaseMessaging.getInstance().subscribeToTopic("chat")
+        getCurrentUser()
+        sendDeviceIDtoFirebase()
 
         latest_message_recyclerView.adapter = adapter
         listenForLatestMessages()
@@ -91,6 +93,20 @@ class LatestMessagesActivity : AppCompatActivity() {
         adapter.clear()
         latestMessageMap.values.sortedByDescending { it.timeStamp }.forEach{
             adapter.add(LatestMessageRow(it, toUsers))
+            Log.i("Adapter", it.toString())
+        }
+    }
+
+    private fun sendDeviceIDtoFirebase(){
+        val token = FirebaseInstanceId.getInstance().getToken()
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/").child("Token").setValue(token)
+
+        ref.addOnSuccessListener {
+            Log.d("Device Token", "sendRegistrationTokenToServer(token)")
+        }
+        ref.addOnFailureListener {
+            Log.d("Device Token", "Failed:(${it.toString()})")
         }
     }
 
@@ -153,14 +169,30 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     private fun getCurrentUser(){
         val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val ref = FirebaseDatabase.getInstance().getReference("/users")
 
-        ref.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(p0: DataSnapshot) {
-                currentUser = p0.getValue(User::class.java)
+        ref.addChildEventListener(object: ChildEventListener{
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val user = p0.getValue(User::class.java)
+                if(user?.uid == uid){
+                    currentUser = p0.getValue(User::class.java)
+                    Log.i("Current User:: ", currentUser.toString())
+                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
 
             }
         })

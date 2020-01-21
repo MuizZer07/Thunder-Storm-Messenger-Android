@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:name=".messages.NewFirebaseMessagingService"
+            android:name=".notification.NewFirebaseMessagingService"
             android:exported="false">
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
