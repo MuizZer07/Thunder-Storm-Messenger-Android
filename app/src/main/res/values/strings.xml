@@ -3,4 +3,9 @@
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="null_string"></string>
+    <string name="sender_id">693144453564</string>
+    <string name="fcm_message">Thunderstorm Messenger</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="default_notification_channel_name" translatable="true">Weather</string>
 </resources>

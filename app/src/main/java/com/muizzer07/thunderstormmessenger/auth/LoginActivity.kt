@@ -23,12 +23,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.support.v4.view.ViewCompat.animate
 import android.R.attr.scaleY
 
-
-
-
-
-
-
 class LoginActivity: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {

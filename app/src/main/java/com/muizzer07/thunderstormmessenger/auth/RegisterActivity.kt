@@ -145,7 +145,7 @@ class RegisterActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val db = FirebaseDatabase.getInstance().getReference("users/$uid")
 
-        val user = User(uid, usernameText.text.toString(), profileImageUrl)
+        val user = User(uid, usernameText.text.toString(), profileImageUrl, "")
         db.setValue(user)
                 .addOnSuccessListener {
                     Log.d("RegisterActivity", "Database updated");
