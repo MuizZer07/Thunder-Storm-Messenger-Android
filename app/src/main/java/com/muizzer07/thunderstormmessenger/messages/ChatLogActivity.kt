@@ -32,6 +32,7 @@ import retrofit2.create
 import android.os.AsyncTask.execute
 import java.io.IOException
 import android.os.StrictMode
+import com.muizzer07.thunderstormmessenger.R.id.texts_recycleView
 import com.muizzer07.thunderstormmessenger.notification.NotificationRequest
 import com.muizzer07.thunderstormmessenger.notification.SendNotificationModel
 import okhttp3.ResponseBody
@@ -115,6 +116,7 @@ class ChatLogActivity : AppCompatActivity() {
 
                 if(textMessage != null){
                     Log.d("ChatlogActivity", "Text Message: " + textMessage.text)
+
                     if(textMessage.fromId == FirebaseAuth.getInstance().uid){
                         adapter.add(ChatFromItem(textMessage, LatestMessagesActivity.currentUser!!))
                     }else{
@@ -122,6 +124,7 @@ class ChatLogActivity : AppCompatActivity() {
                     }
                     Log.d("ChatlogActivity", "Text Message From ID: " + textMessage.fromId)
                     Log.d("ChatlogActivity", "Text Message To ID: " + textMessage.toId)
+
                     texts_recycleView.scrollToPosition(adapter.itemCount - 1)
                 }
             }
