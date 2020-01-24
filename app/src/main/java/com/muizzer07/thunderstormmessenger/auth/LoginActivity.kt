@@ -22,6 +22,9 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.support.v4.view.ViewCompat.animate
 import android.R.attr.scaleY
+import android.content.Context
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 
 class LoginActivity: AppCompatActivity(){
 
@@ -55,6 +58,14 @@ class LoginActivity: AppCompatActivity(){
         registerText.setOnClickListener {
             registerPage()
         };
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun registerPage(){

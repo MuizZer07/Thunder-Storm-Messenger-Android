@@ -1,5 +1,6 @@
 package com.muizzer07.thunderstormmessenger.messages
 
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -30,11 +31,16 @@ import kotlinx.android.synthetic.main.chat_row_to.view.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
 import retrofit2.create
 import android.os.AsyncTask.execute
+import android.os.Build
 import java.io.IOException
 import android.os.StrictMode
+import android.support.v7.widget.LinearLayoutManager
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import com.muizzer07.thunderstormmessenger.R.id.texts_recycleView
 import com.muizzer07.thunderstormmessenger.notification.NotificationRequest
 import com.muizzer07.thunderstormmessenger.notification.SendNotificationModel
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,6 +58,20 @@ class ChatLogActivity : AppCompatActivity() {
 
         Log.d("ChatlogActivity", "ChatlogActivity finished")
 
+        val emojIcon = EmojIconActions(this, root_view, messageText, emojiButton)
+        emojIcon.setUseSystemEmoji(true)
+        messageText.setUseSystemDefault(true)
+
+        emojIcon.setKeyboardListener(object: EmojIconActions.KeyboardListener{
+            override fun onKeyboardClose() {
+                texts_recycleView.scrollToPosition(adapter.itemCount - 1)
+            }
+
+            override fun onKeyboardOpen() {
+                texts_recycleView.scrollToPosition(adapter.itemCount - 1)
+            }
+        })
+
         texts_recycleView.adapter = adapter
 
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
@@ -66,6 +86,11 @@ class ChatLogActivity : AppCompatActivity() {
             if(!messageText.text.toString().equals("")){
                 performSendMessage()
             }
+        }
+
+        emojiButton.setOnClickListener {
+            Log.d("ChatlogActivity", "Emoji Button clicked")
+            emojIcon.ShowEmojIcon()
         }
 
         adapter.setOnItemClickListener { item, view ->

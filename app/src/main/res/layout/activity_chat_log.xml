@@ -4,39 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/root_view"
     tools:context=".messages.ChatLogActivity"
     android:background="#063045"
     tools:layout_editor_absoluteY="25dp">
-
-    <EditText
-        android:id="@+id/messageText"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:padding="15dp"
-        android:hint="Enter Message"
-        android:inputType="textPersonName"
-        android:background="@drawable/rounded_edittext"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sendBtn"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/sendBtn"
         android:layout_width="80dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Send"
-        android:textStyle="bold"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/rounded_button"
+        android:text="Send"
         android:textColor="@android:color/white"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -50,4 +33,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <hani.momanii.supernova_emoji_library.Helper.EmojiconTextView
+        android:id="@+id/emojicon_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+        android:id="@+id/messageText"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/rounded_edittext"
+        android:ems="10"
+        android:hint="Enter Message"
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sendBtn"
+        app:layout_constraintStart_toEndOf="@+id/emojiButton" />
+
+    <ImageView
+        android:id="@+id/emojiButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="2dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/rounded__emoji_button_image"
+        android:src="@drawable/smiley"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/messageText" />
+
 </android.support.constraint.ConstraintLayout>

@@ -8,6 +8,9 @@ androidExtensions {
     experimental = true
 }
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 
 android {
     compileSdkVersion 28
@@ -47,6 +50,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.+'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.github.hani-momanii:SuperNova-Emoji:1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
